@@ -8,3 +8,7 @@ export const signupSchema = z.object({
 })
 
 export const loginSchema = signupSchema.pick({ email: true, password: true });
+
+export const messageSchema = z.object({
+  content: z.string().min(1),
+})

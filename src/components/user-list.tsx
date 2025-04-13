@@ -1,56 +1,78 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { User } from "lucide-react"
+import React, { useEffect, useState } from 'react';
+import { User } from 'lucide-react';
 
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
-
-// Mock user data
-const users = [
-  { id: 1, name: "Alex Johnson", email: "alex@example.com",},
-  { id: 2, name: "Sam Smith", email: "sam@example.com", role: "User" },
-  { id: 3, name: "Taylor Wilson", email: "taylor@example.com", role: "Editor" },
-  { id: 4, name: "Jordan Lee", email: "jordan@example.com", role: "User" },
-  { id: 5, name: "Casey Brown", email: "casey@example.com", role: "Admin" },
-  { id: 6, name: "Riley Garcia", email: "riley@example.com", role: "User" },
-  { id: 7, name: "Morgan Miller", email: "morgan@example.com", role: "Editor" },
-  { id: 8, name: "Jamie Davis", email: "jamie@example.com", role: "User" },
-]
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
+import { TUser } from '@/types';
+import UsersService from '@/services/users';
+import RoomsService from '@/services/rooms';
+import { useRouter } from 'next/navigation';
 
 interface UserListProps {
-  searchQuery: string
+  searchQuery: string;
 }
 
 export function UserList({ searchQuery }: UserListProps) {
-  const [selectedUser, setSelectedUser] = React.useState<number | null>(null)
+  const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
+  const [users, setUsers] = React.useState<TUser[]>([]);
+  const router = useRouter();
 
-  // Filter users based on search query
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const handleClick = async (user: TUser) => {
+    setSelectedUser(user);
+    const room = await RoomsService.get(user.id);
+    console.log(room);
+
+    if (!room) {
+      const response = await RoomsService.post({
+        peerId: user.id,
+        name: 'My first room',
+      });
+
+      router.push(`/${response.id}`);
+
+      return;
+    }
+
+    router.push(`/${room.id}`);
+  };
+
+  useEffect(() => {
+    UsersService.get()
+      .then(setUsers)
+      .catch((e) => console.log(e));
+  }, []);
 
   return (
     <SidebarMenu>
-      {filteredUsers.length > 0 ? (
-        filteredUsers.map((user) => (
-          <SidebarMenuItem key={user.id}>
-            <SidebarMenuButton asChild isActive={selectedUser === user.id} onClick={() => setSelectedUser(user.id)}>
+      {users.length > 0 ? (
+        users.map(({ firstName, lastName, id, email }) => (
+          <SidebarMenuItem key={id}>
+            <SidebarMenuButton
+              asChild
+              isActive={selectedUser?.id === id}
+              onClick={() => handleClick({ email, firstName, id, lastName })}
+            >
               <button className="w-full">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
                   <User className="h-4 w-4" />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium">{user.name}</span>
+                  <span className="text-sm font-medium">{`${firstName} ${lastName}`}</span>
                 </div>
               </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))
       ) : (
-        <div className="px-2 py-4 text-center text-sm text-muted-foreground">No users found</div>
+        <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+          No users found
+        </div>
       )}
     </SidebarMenu>
-  )
+  );
 }

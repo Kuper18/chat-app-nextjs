@@ -23,7 +23,11 @@ import {
 import { UserList } from './user-list';
 import { MessageHistory } from './message-history';
 
-const MainLayout = () => {
+type Props = {
+  children: React.ReactNode;
+}
+
+const MainLayout = ({ children }: Props) => {
   const [searchQuery, setSearchQuery] = React.useState('');
 
   return (
@@ -74,7 +78,7 @@ const MainLayout = () => {
           <SidebarTrigger />
           <h2 className="text-lg font-semibold">Chat with Alex Johnson</h2>
         </header>
-        <MessageHistory selectedConversation="dfsdf" />
+        {children}
       </SidebarInset>
     </SidebarProvider>
   );
