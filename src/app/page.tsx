@@ -1,5 +1,4 @@
 import MainLayout from '@/components/main-layout';
-import { MessageHistory } from '@/components/message-history';
 import MessageIcon from '@/components/ui/icons/message-icon';
 
 export default function Home() {

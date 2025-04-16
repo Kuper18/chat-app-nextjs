@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
-import { MessageSquare, Search, Settings, Users } from 'lucide-react';
+import React from 'react';
+import { MessageSquare, Search, Settings } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
 import {
@@ -21,11 +21,10 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { UserList } from './user-list';
-import { MessageHistory } from './message-history';
 
 type Props = {
   children: React.ReactNode;
-}
+};
 
 const MainLayout = ({ children }: Props) => {
   const [searchQuery, setSearchQuery] = React.useState('');

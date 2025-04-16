@@ -20,14 +20,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { messageSchema } from '@/schemas';
 import { cn, parseJwt } from '@/lib/utils';
+import { useSocket } from '@/hooks/use-socket';
 
 interface Props {
-  roomId: string;
+  roomId: number;
 }
 
 export function MessageHistory({ roomId }: Props) {
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
+  const socket = useSocket({ roomId });
 
   const currentUserId = useMemo(() => parseJwt()?.id, [parseJwt()?.id]);
 
@@ -37,7 +39,7 @@ export function MessageHistory({ roomId }: Props) {
   });
 
   useEffect(() => {
-    MessagesService.get(+roomId).then(setMessages);
+    MessagesService.get(roomId).then(setMessages);
   }, []);
 
   const onSubmit = async ({ content }: TMessageFormData) => {

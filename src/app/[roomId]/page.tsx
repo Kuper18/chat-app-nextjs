@@ -11,7 +11,7 @@ const RoomPage = async ({ params }: Props) => {
 
   return (
     <MainLayout>
-      <MessageHistory roomId={roomId} />
+      <MessageHistory roomId={Number(roomId)} />
     </MainLayout>
   );
 };
