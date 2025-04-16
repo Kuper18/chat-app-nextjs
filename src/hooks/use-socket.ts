@@ -1,8 +1,7 @@
-// useSocket.ts
 import { useState, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const SERVER_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+const SERVER_URL = process.env.NEXT_PUBLIC_BASE_URL?.split('/api')[0] ?? 'http://localhost:8000';
 
 type TSocketQuery = {
   roomId?: number

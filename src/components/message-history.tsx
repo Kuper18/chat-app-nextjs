@@ -1,80 +1,51 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { Send } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import MessageIcon from './ui/icons/message-icon';
-import { TMessage, TMessageFormData } from '@/types';
-import MessagesService from '@/services/messages';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from './ui/form';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { messageSchema } from '@/schemas';
-import { cn, parseJwt } from '@/lib/utils';
+import useMessages from '@/hooks/use-messages';
 import { useSocket } from '@/hooks/use-socket';
+import { cn, parseJwt } from '@/lib/utils';
+import { TMessage } from '@/types';
+import { useQueryClient } from '@tanstack/react-query';
+import EmptyChatView from './empty-chat-view';
+import MessageForm from './message-form';
+import MessagesWrapper from './messages-wrapper';
+import { ScrollArea } from './ui/scroll-area';
+import useAutoScroll from '@/hooks/use-auto-scroll';
+import useSocketEvent from '@/hooks/useSocketEvent';
 
 interface Props {
   roomId: number;
 }
 
 export function MessageHistory({ roomId }: Props) {
-  const [messages, setMessages] = useState<TMessage[]>([]);
-  const [newMessage, setNewMessage] = useState<string>('');
+  const queryClient = useQueryClient();
+  const { data: messages } = useMessages(roomId);
   const socket = useSocket({ roomId });
 
-  const currentUserId = useMemo(() => parseJwt()?.id, [parseJwt()?.id]);
-
-  const form = useForm({
-    resolver: zodResolver(messageSchema),
-    defaultValues: { content: '' },
-  });
-
-  useEffect(() => {
-    MessagesService.get(roomId).then(setMessages);
-  }, []);
-
-  const onSubmit = async ({ content }: TMessageFormData) => {
-    if (!currentUserId) return;
-
-    try {
-      await MessagesService.post({
-        content,
-        roomId: Number(roomId),
-        userId: currentUserId,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+  const updateMessages = (data: TMessage) => {
+    queryClient.setQueryData(['messages'], (oldData?: TMessage[]) => {
+      return oldData ? [...oldData, data] : oldData;
+    });
   };
 
-  if (!true) {
-    return (
-      <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center p-6">
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted">
-          <MessageIcon className="h-12 w-12 text-muted-foreground" />
-        </div>
-        <h3 className="mt-4 text-xl font-medium">Your messages</h3>
-        <p className="mt-2 text-center text-muted-foreground">
-          Select a conversation from the sidebar to view your message history
-        </p>
-      </div>
-    );
+  useSocketEvent({
+    event: 'private-message',
+    roomId,
+    socket,
+    callback: updateMessages,
+  });
+
+  const chatContainerRef = useAutoScroll(messages);
+  const currentUserId = parseJwt()?.id;
+
+  if (!messages?.length) {
+    return <EmptyChatView />;
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col">
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="space-y-4">
-          {messages.map((message) => (
+    <MessagesWrapper>
+      <ScrollArea className="flex-1 h-[calc(100vh-8rem)] p-4">
+        <div ref={chatContainerRef} className="space-y-4">
+          {messages?.map((message) => (
             <div
               key={message.id}
               className={cn(
@@ -97,34 +68,9 @@ export function MessageHistory({ roomId }: Props) {
             </div>
           ))}
         </div>
-      </div>
+      </ScrollArea>
 
-      <div className="border-t p-4">
-        <Form {...form}>
-          <form
-            className="flex space-x-2"
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormControl>
-                    <Input placeholder="Type a message..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button type="submit" size="icon">
-              <Send className="h-4 w-4" />
-              <span className="sr-only">Send message</span>
-            </Button>
-          </form>
-        </Form>
-      </div>
-    </div>
+      <MessageForm />
+    </MessagesWrapper>
   );
 }
