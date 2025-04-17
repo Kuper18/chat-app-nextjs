@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { User } from 'lucide-react';
 
 import {
@@ -8,11 +7,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { TUser } from '@/types';
-import UsersService from '@/services/users';
-import RoomsService from '@/services/rooms';
-import { useRouter } from 'next/navigation';
 import useUsers from '@/hooks/use-users';
+import RoomsService from '@/services/rooms';
+import { useSelectedUserStore } from '@/store/selected-user';
+import { TUser } from '@/types';
+import { useRouter } from 'next/navigation';
 
 interface UserListProps {
   searchQuery: string;
@@ -20,11 +19,12 @@ interface UserListProps {
 
 export function UserList({ searchQuery }: UserListProps) {
   const { data: users } = useUsers();
-  const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
+  const { user, setUser } = useSelectedUserStore();
   const router = useRouter();
 
   const handleClick = async (user: TUser) => {
-    setSelectedUser(user);
+    setUser(user);
+
     const room = await RoomsService.get(user.id);
     console.log(room);
 
@@ -55,15 +55,16 @@ export function UserList({ searchQuery }: UserListProps) {
       {users.map(({ firstName, lastName, id, email }) => (
         <SidebarMenuItem key={id}>
           <SidebarMenuButton
+            className="cursor-pointer"
             asChild
-            isActive={selectedUser?.id === id}
+            isActive={user?.id === id}
             onClick={() => handleClick({ email, firstName, id, lastName })}
           >
             <button className="w-full">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                <User className="h-4 w-4" />
+                <User className="h-4 w-4 text-primary" />
               </div>
-              <div className="flex flex-col items-start">
+              <div className="relative flex flex-col items-start">
                 <span className="text-sm font-medium">{`${firstName} ${lastName}`}</span>
               </div>
             </button>

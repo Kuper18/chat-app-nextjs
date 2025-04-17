@@ -22,6 +22,8 @@ export function MessageHistory({ roomId }: Props) {
   const socket = useSocket({ roomId });
 
   const updateMessages = (data: TMessage) => {
+    console.log(data);
+    
     queryClient.setQueryData(['messages'], (oldData?: TMessage[]) => {
       return oldData ? [...oldData, data] : oldData;
     });
@@ -50,7 +52,7 @@ export function MessageHistory({ roomId }: Props) {
               key={message.id}
               className={cn(
                 'flex',
-                currentUserId === message.userId
+                currentUserId === message.senderId
                   ? 'justify-end'
                   : 'justify-start',
               )}
@@ -58,7 +60,7 @@ export function MessageHistory({ roomId }: Props) {
               <div
                 className={cn(
                   'rounded-lg px-4 py-2',
-                  currentUserId === message.userId
+                  currentUserId === message.senderId
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted',
                 )}

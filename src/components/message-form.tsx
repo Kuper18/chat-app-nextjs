@@ -11,6 +11,7 @@ import { Send } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useParams } from 'next/navigation';
+import { useSelectedUserStore } from '@/store/selected-user';
 
 const MessageForm = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -24,15 +25,17 @@ const MessageForm = () => {
     onSuccess: () => form.reset(),
   });
 
-  const currentUserId = parseJwt()?.id;
+  const { user } = useSelectedUserStore();
+  const senderUserId = parseJwt()?.id;
 
   const onSubmit = async ({ content }: TMessageFormData) => {
-    if (!currentUserId) return;
+    if (!senderUserId || !user) return;
 
     mutate({
       content,
       roomId: +roomId,
-      userId: currentUserId,
+      senderId: senderUserId,
+      recipientId: user.id,
     });
   };
 

@@ -28,11 +28,13 @@ export type TRoomBody = Omit<TRoom, 'id'> & {
 
 export type TMessage = {
   id: number;
-  userId: number;
+  recipientId: number;
+  senderId: number;
   roomId: number;
   content: string;
+  isRead: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
-export type TMessageBody = Pick<TMessage, 'content' | 'roomId' | 'userId'>;
+export type TMessageBody = Pick<TMessage, 'content' | 'roomId' | 'senderId' | 'recipientId'>;
