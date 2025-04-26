@@ -37,4 +37,12 @@ export type TMessage = {
   updatedAt: string;
 };
 
-export type TMessageBody = Pick<TMessage, 'content' | 'roomId' | 'senderId' | 'recipientId'>;
+export type TMessageBody = Pick<
+  TMessage,
+  'content' | 'roomId' | 'senderId' | 'recipientId'
+>;
+
+export type TUnreadCount = {
+  senderId: number;
+  count: number;
+};
