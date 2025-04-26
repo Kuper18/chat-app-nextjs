@@ -1,5 +1,8 @@
+import { QueryKeys } from '@/enum';
 import { cn, parseJwt } from '@/lib/utils';
-import { TMessage } from '@/types';
+import MessagesService from '@/services/messages';
+import { TMessage, TUnreadCount } from '@/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -10,7 +13,13 @@ type Props = {
   refLastMessage: (node?: Element | null) => void;
 };
 
-const Message = ({ message, isFirstUnread, isLastMessage, refLastMessage }: Props) => {
+const Message = ({
+  message,
+  isFirstUnread,
+  isLastMessage,
+  refLastMessage,
+}: Props) => {
+  const queryClient = useQueryClient();
   const [refFirstMessage, inViewFirstMessage, entryFirstMessage] = useInView({
     threshold: 1,
     triggerOnce: true,
@@ -18,6 +27,27 @@ const Message = ({ message, isFirstUnread, isLastMessage, refLastMessage }: Prop
   const [currentMessageref, currentMessageinView] = useInView({
     threshold: 1,
     triggerOnce: true,
+  });
+
+  const { mutate } = useMutation({
+    mutationKey: [QueryKeys.MESSAGES],
+    mutationFn: MessagesService.readMessage,
+    onSuccess: (message) => {
+      queryClient.setQueryData(
+        [QueryKeys.UNREAD_COUNT_MESSAGES],
+        (unreadCountMessages?: TUnreadCount[]) => {
+          if (!unreadCountMessages) return [];
+
+          return unreadCountMessages.map((item) => {
+            if (item.senderId === message.senderId) {
+              return { ...item, count: item.count - 1 };
+            }
+
+            return item;
+          });
+        },
+      );
+    },
   });
 
   const currentUserId = parseJwt()?.id;
@@ -34,12 +64,21 @@ const Message = ({ message, isFirstUnread, isLastMessage, refLastMessage }: Prop
     currentMessageref(refElement);
   };
 
+  const markAsReadMessage = () => {
+    mutate({
+      id: message.id,
+      isRead: true,
+      recipientId: message.recipientId,
+    });
+  };
+
   useEffect(() => {
     if (entryFirstMessage && inViewFirstMessage) {
       entryFirstMessage.target.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
       });
+      markAsReadMessage();
     }
   }, [entryFirstMessage, inViewFirstMessage]);
 
@@ -49,7 +88,7 @@ const Message = ({ message, isFirstUnread, isLastMessage, refLastMessage }: Prop
       !message.isRead &&
       currentUserId !== message.senderId
     ) {
-      console.log(message);
+      markAsReadMessage();
     }
   }, [currentMessageinView, isFirstUnread]);
 

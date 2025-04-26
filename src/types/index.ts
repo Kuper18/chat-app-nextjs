@@ -42,6 +42,9 @@ export type TMessageBody = Pick<
   'content' | 'roomId' | 'senderId' | 'recipientId'
 >;
 
+export type TMessageBodyPatch = Pick<TMessage, 'content' | 'id'>;
+export type TReadMessageBody = Pick<TMessage, 'recipientId' | 'id' | 'isRead'>;
+
 export type TUnreadCount = {
   senderId: number;
   count: number;

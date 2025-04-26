@@ -37,6 +37,7 @@ const MainLayout = ({ children }: Props) => {
             <MessageSquare className="h-6 w-6" />
             <h1 className="text-lg font-semibold">Chat App</h1>
           </div>
+
           <div className="px-2 pt-2">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -50,14 +51,17 @@ const MainLayout = ({ children }: Props) => {
             </div>
           </div>
         </SidebarHeader>
+
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Users</SidebarGroupLabel>
+
             <SidebarGroupContent>
               <UserList searchQuery={searchQuery} />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -70,8 +74,10 @@ const MainLayout = ({ children }: Props) => {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>
+
         <SidebarRail />
       </Sidebar>
+
       <SidebarInset>
         <header className="flex h-16 items-center gap-4 border-b bg-background px-6">
           <SidebarTrigger />

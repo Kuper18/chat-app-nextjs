@@ -3,7 +3,7 @@
 import useMessages from '@/hooks/use-messages';
 import { useSocket } from '@/hooks/use-socket';
 import { parseJwt } from '@/lib/utils';
-import { TMessage } from '@/types';
+import { TMessage, TUnreadCount } from '@/types';
 import { useQueryClient } from '@tanstack/react-query';
 import EmptyChatView from './empty-chat-view';
 import MessageForm from './message-form';
@@ -13,6 +13,7 @@ import useSocketEvent from '@/hooks/useSocketEvent';
 import { useInView } from 'react-intersection-observer';
 import { useEffect, useRef, useState } from 'react';
 import Message from './message';
+import { QueryKeys } from '@/enum';
 
 interface Props {
   roomId: number;
@@ -25,23 +26,25 @@ export function MessageHistory({ roomId }: Props) {
   });
 
   const { data: messages } = useMessages(roomId);
+  const currentUserId = parseJwt()?.id;
   const socket = useSocket({ roomId });
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const isFirstUnreadMessageRef = useRef(true);
   const [isFirstRender, setIsFirstRender] = useState(true);
 
-  const currentUserId = parseJwt()?.id;
-
   const updateMessages = (data: TMessage) => {
-    queryClient.setQueryData(['messages'], (oldData?: TMessage[]) => {
-      return oldData ? [...oldData, data] : oldData;
-    });
+    queryClient.setQueryData(
+      [QueryKeys.MESSAGES, roomId],
+      (messages?: TMessage[]) => {
+        return messages ? [...messages, data] : messages;
+      },
+    );
   };
 
   useSocketEvent({
     event: 'private-message',
-    roomId,
+    id: roomId,
     socket,
     callback: updateMessages,
   });

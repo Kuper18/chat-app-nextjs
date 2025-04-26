@@ -5,6 +5,7 @@ const SERVER_URL = process.env.NEXT_PUBLIC_BASE_URL?.split('/api')[0] ?? 'http:/
 
 type TSocketQuery = {
   roomId?: number
+  userId?: number
 }
 
 export const useSocket = (query: TSocketQuery): Socket | null => {

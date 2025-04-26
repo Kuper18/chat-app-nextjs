@@ -1,9 +1,10 @@
+import { QueryKeys } from '@/enum';
 import MessagesService from '@/services/messages';
 import { useQuery } from '@tanstack/react-query';
 
 const useUnreadCountMessages = () => {
   return useQuery({
-    queryKey: ['unread-count-messages'],
+    queryKey: [QueryKeys.UNREAD_COUNT_MESSAGES],
     queryFn: MessagesService.getUnreadCount,
   });
 };
