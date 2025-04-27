@@ -15,7 +15,7 @@ const useSocketEvent = <T>({ event, socket, id, callback }: Params<T>) => {
     socket.on(event, callback);
 
     return () => {
-      socket.off(event);
+      socket.off(event, callback);
     };
   }, [id, socket]);
 };

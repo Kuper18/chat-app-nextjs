@@ -3,7 +3,7 @@
 import useMessages from '@/hooks/use-messages';
 import { useSocket } from '@/hooks/use-socket';
 import { parseJwt } from '@/lib/utils';
-import { TMessage, TUnreadCount } from '@/types';
+import { TMessage } from '@/types';
 import { useQueryClient } from '@tanstack/react-query';
 import EmptyChatView from './empty-chat-view';
 import MessageForm from './message-form';
@@ -27,7 +27,7 @@ export function MessageHistory({ roomId }: Props) {
 
   const { data: messages } = useMessages(roomId);
   const currentUserId = parseJwt()?.id;
-  const socket = useSocket({ roomId });
+  const socket = useSocket();
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const isFirstUnreadMessageRef = useRef(true);
@@ -70,6 +70,18 @@ export function MessageHistory({ roomId }: Props) {
       setIsFirstRender(false);
     }
   }, [scrollRef, messages]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit('join-room', roomId);
+    }
+
+    return () => {
+      if (socket) {
+        socket.emit('leave-room', roomId);
+      }
+    };
+  }, [socket, roomId]);
 
   if (!messages?.length) {
     return <EmptyChatView />;

@@ -33,7 +33,7 @@ export function UserList({ searchQuery }: UserListProps) {
 
   const { data: users } = useUsers();
   const { data: unreadCountMessages } = useUnreadCountMessages();
-  const socket = useSocket({});
+  const socket = useSocket();
   const { user, setUser } = useSelectedUserStore();
 
   const currentUserId = parseJwt()?.id;

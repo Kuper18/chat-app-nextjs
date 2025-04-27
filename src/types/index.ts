@@ -49,3 +49,8 @@ export type TUnreadCount = {
   senderId: number;
   count: number;
 };
+
+export type TSocketQuery = {
+  roomId?: number;
+  userId?: number;
+};
