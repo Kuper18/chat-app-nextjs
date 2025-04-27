@@ -73,7 +73,7 @@ const Message = ({
   };
 
   useEffect(() => {
-    if (entryFirstMessage && inViewFirstMessage) {
+    if (entryFirstMessage) {
       entryFirstMessage.target.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
