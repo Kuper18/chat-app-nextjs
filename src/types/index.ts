@@ -54,3 +54,8 @@ export type TSocketQuery = {
   roomId?: number;
   userId?: number;
 };
+
+export type TOnlineUsers = {
+  socketId: number;
+  userId: number;
+};

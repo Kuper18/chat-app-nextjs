@@ -1,7 +1,5 @@
 'use client';
 
-import { User } from 'lucide-react';
-
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -10,10 +8,9 @@ import {
 import useUsers from '@/hooks/use-users';
 import RoomsService from '@/services/rooms';
 import { useSelectedUserStore } from '@/store/selected-user';
-import { TMessage, TUnreadCount, TUser } from '@/types';
+import { TMessage, TOnlineUsers, TUnreadCount, TUser } from '@/types';
 import { useParams, useRouter } from 'next/navigation';
 import useUnreadCountMessages from '@/hooks/use-unread-count-messages';
-import { Badge } from './ui/badge';
 import useSocketEvent from '@/hooks/useSocketEvent';
 import { useSocket } from '@/hooks/use-socket';
 import { parseJwt } from '@/lib/utils';
@@ -21,6 +18,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '@/enum';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import UserItem from './user-item';
+import { useEffect, useState } from 'react';
 
 interface UserListProps {
   searchQuery: string;
@@ -35,6 +34,8 @@ export function UserList({ searchQuery }: UserListProps) {
   const { data: unreadCountMessages } = useUnreadCountMessages();
   const socket = useSocket();
   const { user, setUser } = useSelectedUserStore();
+
+  const [onlineUsers, setOnlineUsers] = useState<TOnlineUsers[]>([]);
 
   const currentUserId = parseJwt()?.id;
 
@@ -92,6 +93,13 @@ export function UserList({ searchQuery }: UserListProps) {
     socket,
     callback: showNotification,
   });
+  useSocketEvent({
+    event: 'get-online-users',
+    socket,
+    callback: (onlineUsers: TOnlineUsers[]) => {
+      setOnlineUsers(onlineUsers);
+    },
+  });
 
   const handleClick = async (user: TUser) => {
     setUser(user);
@@ -112,6 +120,12 @@ export function UserList({ searchQuery }: UserListProps) {
     router.push(`/${room.id}`);
   };
 
+  useEffect(() => {
+    if (currentUserId && socket) {
+      socket.emit('online', currentUserId);
+    }
+  }, [currentUserId, socket]);
+
   if (!users?.length) {
     return (
       <div className="px-2 py-4 text-center text-sm text-muted-foreground">
@@ -122,28 +136,26 @@ export function UserList({ searchQuery }: UserListProps) {
 
   return (
     <SidebarMenu>
-      {users.map(({ firstName, lastName, id, email }) => {
-        const count = unreadCountMessages?.find(
-          (item) => item.senderId === id,
-        )?.count;
+      {users.map((userItem) => {
+        const count =
+          unreadCountMessages?.find((item) => item.senderId === userItem.id)
+            ?.count ?? 0;
 
         return (
-          <SidebarMenuItem className="flex justify-between" key={id}>
+          <SidebarMenuItem className="flex justify-between" key={userItem.id}>
             <SidebarMenuButton
               className="cursor-pointer"
               asChild
-              isActive={user?.id === id}
-              onClick={() => handleClick({ email, firstName, id, lastName })}
+              isActive={user?.id === userItem.id}
+              onClick={() => handleClick(userItem)}
             >
-              <button className="w-full flex justify-between">
-                <div className="flex space-x-2">
-                  <User className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">{`${firstName} ${lastName}`}</span>
-                </div>
-
-                {count && count > 0 && (
-                  <Badge className="min-w-8 shrink-0">{count}</Badge>
-                )}
+              <button className="w-full">
+                <UserItem
+                  isOnline={onlineUsers.some((u) => u.userId === userItem.id)}
+                  unreadMessagesCount={count}
+                  user={userItem}
+                  key={userItem.id}
+                />
               </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
