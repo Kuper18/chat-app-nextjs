@@ -1,11 +1,11 @@
 import axiosInstance from '@/axios-instance';
-import { TMessage, TMessageBody, TMessageBodyPatch, TReadMessageBody, TUnreadCount } from '@/types';
+import { TMessage, TMessageBody, TMessageBodyPatch, TMessageResponse, TReadMessageBody, TUnreadCount } from '@/types';
 
 class MessagesService {
-  static async get(roomId: number) {
+  static async get(roomId: number, cursor: number | null) {
     try {
-      const { data } = await axiosInstance.get<TMessage[]>(
-        `/messages/${roomId}`,
+      const { data } = await axiosInstance.get<TMessageResponse>(
+        `/messages/${roomId}?cursor=${cursor}`,
       );
 
       return data;

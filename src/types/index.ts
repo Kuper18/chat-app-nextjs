@@ -37,6 +37,12 @@ export type TMessage = {
   updatedAt: string;
 };
 
+export type TMessageResponse = {
+  messages: TMessage[];
+  nextCursor: number | null;
+  previousCursor: number | null;
+};
+
 export type TMessageBody = Pick<
   TMessage,
   'content' | 'roomId' | 'senderId' | 'recipientId'
