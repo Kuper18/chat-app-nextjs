@@ -1,6 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { QueryKeys } from '@/enum';
 import MessagesService from '@/services/messages';
-import { useQuery } from '@tanstack/react-query';
 
 const useMessages = (roomId: number) => {
   return useQuery({

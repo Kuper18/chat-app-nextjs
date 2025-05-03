@@ -1,10 +1,11 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+
 import { QueryKeys } from '@/enum';
 import { cn, parseJwt } from '@/lib/utils';
 import MessagesService from '@/services/messages';
 import { TMessage, TUnreadCount } from '@/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
 
 type Props = {
   message: TMessage;
@@ -84,9 +85,9 @@ const Message = ({
 
   useEffect(() => {
     if (
-      currentMessageinView &&
-      !message.isRead &&
-      currentUserId !== message.senderId
+      currentMessageinView
+      && !message.isRead
+      && currentUserId !== message.senderId
     ) {
       markAsReadMessage();
     }

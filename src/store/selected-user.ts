@@ -1,5 +1,6 @@
-import { TUser } from '@/types';
 import { create } from 'zustand';
+
+import { TUser } from '@/types';
 
 type SelectedUserStore = {
   user: TUser | null;

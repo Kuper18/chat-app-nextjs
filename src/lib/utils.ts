@@ -1,9 +1,10 @@
+import { clsx, type ClassValue } from 'clsx';
+import Cookies from 'js-cookie';
+import { twMerge } from 'tailwind-merge';
+
+import { COOKIE_CONFIG } from '@/config';
 import { Tokens } from '@/enum';
 import { TTokens } from '@/types';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import Cookies from 'js-cookie';
-import { COOKIE_CONFIG } from '@/config';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -32,7 +33,7 @@ export const parseJwt = (): { id: number; iat: number; exp: number } | null => {
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
-        .map((c) => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`)
+        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
         .join(''),
     );
 

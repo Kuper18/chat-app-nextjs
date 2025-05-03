@@ -1,7 +1,9 @@
+import React from 'react';
+
 import MainLayout from '@/components/main-layout';
 import MessageIcon from '@/components/ui/icons/message-icon';
 
-export default function Home() {
+const Home = () => {
   return (
     <MainLayout>
       <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center p-6">
@@ -15,4 +17,5 @@ export default function Home() {
       </div>
     </MainLayout>
   );
-}
+};
+export default Home;

@@ -1,3 +1,5 @@
+import React from 'react';
+
 const MessageIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg

@@ -1,31 +1,32 @@
 'use client';
 
-import { useSocket } from '@/hooks/use-socket';
-import { parseJwt } from '@/lib/utils';
-import { TMessage, TMessageResponse } from '@/types';
 import {
   InfiniteData,
   useInfiniteQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import React, { useEffect, useMemo } from 'react';
+
+import { QueryKeys } from '@/enum';
+import useScrollChatMessages from '@/hooks/use-scroll-chat-messages';
+import { useSocket } from '@/hooks/use-socket';
+import useSocketEvent from '@/hooks/useSocketEvent';
+import { parseJwt } from '@/lib/utils';
+import MessagesService from '@/services/messages';
+import { TMessage, TMessageResponse } from '@/types';
+
 import EmptyChatView from './empty-chat-view';
+import Message from './message';
 import MessageForm from './message-form';
 import MessagesWrapper from './messages-wrapper';
-import { ScrollArea } from './ui/scroll-area';
-import useSocketEvent from '@/hooks/useSocketEvent';
-import { useInView } from 'react-intersection-observer';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import Message from './message';
-import { QueryKeys } from '@/enum';
-import MessagesService from '@/services/messages';
 import { Button } from './ui/button';
-import useScrollChatMessages from '@/hooks/use-scroll-chat-messages';
+import { ScrollArea } from './ui/scroll-area';
 
 interface Props {
   roomId: number;
 }
 
-export function MessageHistory({ roomId }: Props) {
+export const MessageHistory = ({ roomId }: Props) => {
   const queryClient = useQueryClient();
 
   const currentUserId = parseJwt()?.id;
@@ -43,10 +44,9 @@ export function MessageHistory({ roomId }: Props) {
   });
 
   const messages = useMemo(
-    () =>
-      data?.pages.reduce((acc, page) => {
-        return [...acc, ...page.messages];
-      }, [] as TMessage[]),
+    () => data?.pages.reduce((acc, page) => {
+      return [...acc, ...page.messages];
+    }, [] as TMessage[]),
     [data],
   );
 
@@ -115,16 +115,15 @@ export function MessageHistory({ roomId }: Props) {
         <div ref={scrollMessageRef} className="relative space-y-4">
           <Button
             className="absolute z-[-1] pointer-events-none h-0 w-0 p-0 m-0 opacity-0"
-            aria-hidden={true}
+            aria-hidden
             aria-label="Load more messages"
             ref={loadMoreRef}
           />
 
           {messages.map((message, index) => {
-            const isFirstUnread =
-              !message.isRead &&
-              messages.findIndex((m) => !m.isRead) === index &&
-              currentUserId !== message.senderId;
+            const isFirstUnread = !message.isRead
+              && messages.findIndex((m) => !m.isRead) === index
+              && currentUserId !== message.senderId;
 
             isFirstUnreadMessageRef.current = isFirstUnread;
 
@@ -144,4 +143,4 @@ export function MessageHistory({ roomId }: Props) {
       <MessageForm />
     </MessagesWrapper>
   );
-}
+};

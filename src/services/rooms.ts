@@ -1,5 +1,5 @@
 import axiosInstance from '@/axios-instance';
-import { TRoom, TRoomBody, TUser } from '@/types';
+import { TRoom, TRoomBody } from '@/types';
 
 class RoomsService {
   static async get(peerId: number) {

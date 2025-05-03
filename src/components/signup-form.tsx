@@ -1,14 +1,19 @@
 'use client';
 
-import type React from 'react';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { signupSchema } from '@/schemas';
+import AuthService from '@/services/auth';
+import { TSignupFormData } from '@/types';
+
 import {
   Form,
   FormControl,
@@ -17,13 +22,10 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { signupSchema } from '@/schemas';
-import { TSignupFormData } from '@/types';
-import AuthService from '@/services/auth';
 
-export function SignUpForm() {
+import type React from 'react';
+
+export const SignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
@@ -39,8 +41,8 @@ export function SignUpForm() {
 
   const onSubmit = async (data: TSignupFormData) => {
     try {
-      await AuthService.signup(data)
-      router.push('/')
+      await AuthService.signup(data);
+      router.push('/');
     } catch (error) {
       console.log(error);
     }
@@ -129,4 +131,4 @@ export function SignUpForm() {
       </CardFooter>
     </Card>
   );
-}
+};

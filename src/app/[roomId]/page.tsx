@@ -1,6 +1,7 @@
+import React from 'react';
+
 import MainLayout from '@/components/main-layout';
 import { MessageHistory } from '@/components/message-history';
-import React from 'react';
 
 type Props = {
   params: { roomId: string };

@@ -1,10 +1,10 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import Cookies from 'js-cookie';
 
-import { Tokens } from './enum';
-import { TTokens } from './types';
-import { removeCookies, setCookies } from './lib/utils';
 import { COOKIE_CONFIG } from './config';
+import { Tokens } from './enum';
+import { removeCookies } from './lib/utils';
+import { TTokens } from './types';
 
 const API_CONFIG = {
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000/api',

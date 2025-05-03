@@ -1,11 +1,13 @@
 'use client';
 
-import { TSocketQuery } from '@/types';
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext, useContext, useEffect, useState,
+} from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const SERVER_URL =
-  process.env.NEXT_PUBLIC_BASE_URL?.split('/api')[0] ?? 'http://localhost:8000';
+import { TSocketQuery } from '@/types';
+
+const SERVER_URL = process.env.NEXT_PUBLIC_BASE_URL?.split('/api')[0] ?? 'http://localhost:8000';
 
 type TSocketContext = {
   socket: Socket | null;

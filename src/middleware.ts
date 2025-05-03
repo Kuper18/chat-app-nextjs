@@ -1,9 +1,9 @@
 import { jwtVerify } from 'jose';
 import { NextResponse } from 'next/server';
 
+import { Tokens } from './enum';
 
 import type { NextRequest } from 'next/server';
-import { Tokens } from './enum';
 
 export async function middleware(req: NextRequest) {
   const refreshToken = req.cookies.get(Tokens.REFRESH);

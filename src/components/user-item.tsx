@@ -1,8 +1,10 @@
 import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { TUser } from '@/types';
-import { Badge } from './ui/badge';
+
 import { cn } from '@/lib/utils';
+import { TUser } from '@/types';
+
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Badge } from './ui/badge';
 
 type Props = {
   user: TUser;

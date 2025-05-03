@@ -1,4 +1,5 @@
 import React from 'react';
+
 import MessageForm from './message-form';
 import MessagesWrapper from './messages-wrapper';
 import MessageIcon from './ui/icons/message-icon';
@@ -12,7 +13,7 @@ const EmptyChatView = () => {
             <MessageIcon className="h-12 w-12 text-muted-foreground" />
           </div>
           <h3 className="mt-4 text-xl font-medium">
-            You don't have a message history with this user
+            You don&apos;t have a message history with this user
           </h3>
         </div>
       </div>

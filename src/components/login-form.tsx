@@ -1,14 +1,18 @@
 'use client';
 
-import type React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { loginSchema } from '@/schemas';
+import AuthService from '@/services/auth';
+import { TLoginFormData } from '@/types';
+
 import {
   Form,
   FormControl,
@@ -17,12 +21,10 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { useForm } from 'react-hook-form';
-import { loginSchema } from '@/schemas';
-import { TLoginFormData } from '@/types';
-import AuthService from '@/services/auth';
 
-export function LoginForm() {
+import type React from 'react';
+
+export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
@@ -35,11 +37,15 @@ export function LoginForm() {
   const router = useRouter();
 
   const onSubmit = async (data: TLoginFormData) => {
+    setIsLoading(true);
+
     try {
-      await AuthService.login(data)
-      router.push('/')
+      await AuthService.login(data);
+      router.push('/');
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -77,7 +83,7 @@ export function LoginForm() {
             />
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? 'Loading...' : 'Sign in'}
             </Button>
           </form>
         </Form>
@@ -96,4 +102,4 @@ export function LoginForm() {
       </CardFooter>
     </Card>
   );
-}
+};

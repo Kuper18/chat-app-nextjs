@@ -1,4 +1,3 @@
-import { TMessage, TMessageResponse } from '@/types';
 import {
   FetchPreviousPageOptions,
   InfiniteData,
@@ -6,6 +5,8 @@ import {
 } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+
+import { TMessage, TMessageResponse } from '@/types';
 
 type Params = {
   fetchPreviousPage: (
@@ -17,7 +18,11 @@ type Params = {
   hasPreviousPage: boolean;
 };
 
-const useScrollChatMessages = ({ fetchPreviousPage, messages, hasPreviousPage }: Params) => {
+const useScrollChatMessages = ({
+  fetchPreviousPage,
+  messages,
+  hasPreviousPage,
+}: Params) => {
   const [refLastMessage, inViewLastMessage] = useInView({
     threshold: 0.9,
   });
@@ -50,7 +55,7 @@ const useScrollChatMessages = ({ fetchPreviousPage, messages, hasPreviousPage }:
 
       setIsFirstRender(false);
     }
-  }, [scrollMessageRef, messages]);
+  }, [scrollMessageRef, messages, isFirstRender]);
 
   useEffect(() => {
     if (inViewLoadMore) {

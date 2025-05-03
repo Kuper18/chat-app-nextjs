@@ -1,31 +1,35 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { QueryKeys } from '@/enum';
+import { useSocket } from '@/hooks/use-socket';
+import useUnreadCountMessages from '@/hooks/use-unread-count-messages';
 import useUsers from '@/hooks/use-users';
+import useSocketEvent from '@/hooks/useSocketEvent';
+import { parseJwt } from '@/lib/utils';
 import RoomsService from '@/services/rooms';
 import { useSelectedUserStore } from '@/store/selected-user';
-import { TMessage, TOnlineUsers, TUnreadCount, TUser } from '@/types';
-import { useParams, useRouter } from 'next/navigation';
-import useUnreadCountMessages from '@/hooks/use-unread-count-messages';
-import useSocketEvent from '@/hooks/useSocketEvent';
-import { useSocket } from '@/hooks/use-socket';
-import { parseJwt } from '@/lib/utils';
-import { useQueryClient } from '@tanstack/react-query';
-import { QueryKeys } from '@/enum';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
+import {
+  TMessage, TOnlineUsers, TUnreadCount, TUser,
+} from '@/types';
+
 import UserItem from './user-item';
-import { useEffect, useState } from 'react';
 
 interface UserListProps {
   searchQuery: string;
 }
 
-export function UserList({ searchQuery }: UserListProps) {
+export const UserList = ({ searchQuery }: UserListProps) => {
   const queryClient = useQueryClient();
   const { roomId } = useParams<{ roomId: string }>();
   const router = useRouter();
@@ -41,8 +45,7 @@ export function UserList({ searchQuery }: UserListProps) {
 
   const showNotification = (message: TMessage) => {
     const room = Number(roomId);
-    const shouldNotify =
-      message.recipientId === currentUserId && message.roomId !== room;
+    const shouldNotify = message.recipientId === currentUserId && message.roomId !== room;
 
     if (shouldNotify) {
       if (room !== message.roomId) {
@@ -56,11 +59,9 @@ export function UserList({ searchQuery }: UserListProps) {
             );
 
             if (existingItem) {
-              return unreadCountMessages.map((element) =>
-                element.senderId === existingItem.senderId
-                  ? { ...element, count: element.count + 1 }
-                  : element,
-              );
+              return unreadCountMessages.map((element) => element.senderId === existingItem.senderId
+                ? { ...element, count: element.count + 1 }
+                : element);
             }
 
             return [
@@ -137,9 +138,8 @@ export function UserList({ searchQuery }: UserListProps) {
   return (
     <SidebarMenu>
       {users.map((userItem) => {
-        const count =
-          unreadCountMessages?.find((item) => item.senderId === userItem.id)
-            ?.count ?? 0;
+        const count = unreadCountMessages?.find((item) => item.senderId === userItem.id)
+          ?.count ?? 0;
 
         return (
           <SidebarMenuItem className="flex justify-between" key={userItem.id}>
@@ -149,7 +149,7 @@ export function UserList({ searchQuery }: UserListProps) {
               isActive={user?.id === userItem.id}
               onClick={() => handleClick(userItem)}
             >
-              <button className="w-full">
+              <button type="button" className="w-full">
                 <UserItem
                   isOnline={onlineUsers.some((u) => u.userId === userItem.id)}
                   unreadMessagesCount={count}
@@ -163,4 +163,4 @@ export function UserList({ searchQuery }: UserListProps) {
       })}
     </SidebarMenu>
   );
-}
+};

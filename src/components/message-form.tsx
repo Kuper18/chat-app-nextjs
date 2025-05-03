@@ -1,17 +1,21 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { Send } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+
 import { parseJwt } from '@/lib/utils';
 import { messageSchema } from '@/schemas';
 import MessagesService from '@/services/messages';
-import { TMessageFormData } from '@/types';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
-import { Send } from 'lucide-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { useParams } from 'next/navigation';
 import { useSelectedUserStore } from '@/store/selected-user';
+import { TMessageFormData } from '@/types';
+
+import { Button } from './ui/button';
+import {
+  Form, FormControl, FormField, FormItem, FormMessage,
+} from './ui/form';
+import { Input } from './ui/input';
 
 const MessageForm = () => {
   const { roomId } = useParams<{ roomId: string }>();

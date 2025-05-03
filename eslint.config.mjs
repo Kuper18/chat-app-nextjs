@@ -20,10 +20,10 @@ const eslintConfig = [
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
     'plugin:@typescript-eslint/recommended',
-    // 'airbnb-typescript',
   ),
   {
     rules: {
+      'no-param-reassign': 0,
       '@typescript-eslint/no-explicit-any': 'off',
       'no-useless-catch': 'off',
       'no-shadow': 'off',

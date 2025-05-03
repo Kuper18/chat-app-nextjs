@@ -1,5 +1,6 @@
-import { loginSchema, messageSchema, signupSchema } from '@/schemas';
 import { z } from 'zod';
+
+import { loginSchema, messageSchema, signupSchema } from '@/schemas';
 
 export type TTokens = {
   accessToken: string;

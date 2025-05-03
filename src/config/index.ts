@@ -1,5 +1,5 @@
 export const COOKIE_CONFIG = {
-  expires: 90,
+  expires: 7,
   path: '/',
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'strict',

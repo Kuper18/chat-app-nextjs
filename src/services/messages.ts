@@ -1,5 +1,12 @@
 import axiosInstance from '@/axios-instance';
-import { TMessage, TMessageBody, TMessageBodyPatch, TMessageResponse, TReadMessageBody, TUnreadCount } from '@/types';
+import {
+  TMessage,
+  TMessageBody,
+  TMessageBodyPatch,
+  TMessageResponse,
+  TReadMessageBody,
+  TUnreadCount,
+} from '@/types';
 
 class MessagesService {
   static async get(roomId: number, cursor: number | null) {
@@ -17,7 +24,7 @@ class MessagesService {
   static async getUnreadCount() {
     try {
       const { data } = await axiosInstance.get<TUnreadCount[]>(
-        `/messages/unread-counts`,
+        '/messages/unread-counts',
       );
 
       return data;
@@ -36,9 +43,12 @@ class MessagesService {
     }
   }
 
-  static async patch({ id, ...body}: TMessageBodyPatch) {
+  static async patch({ id, ...body }: TMessageBodyPatch) {
     try {
-      const { data } = await axiosInstance.patch<TMessage>(`/messages/${id}`, body);
+      const { data } = await axiosInstance.patch<TMessage>(
+        `/messages/${id}`,
+        body,
+      );
 
       return data;
     } catch (error) {
@@ -46,9 +56,12 @@ class MessagesService {
     }
   }
 
-  static async readMessage({ id, ...body}: TReadMessageBody) {
+  static async readMessage({ id, ...body }: TReadMessageBody) {
     try {
-      const { data } = await axiosInstance.patch<TMessage>(`/messages/read/${id}`, body);
+      const { data } = await axiosInstance.patch<TMessage>(
+        `/messages/read/${id}`,
+        body,
+      );
 
       return data;
     } catch (error) {

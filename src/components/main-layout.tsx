@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import { MessageSquare, Search, Settings } from 'lucide-react';
+import React from 'react';
 
 import { Input } from '@/components/ui/input';
 import {
@@ -20,6 +20,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+
 import { UserList } from './user-list';
 
 type Props = {
