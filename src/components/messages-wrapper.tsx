@@ -6,7 +6,7 @@ type Props = {
 
 const MessagesWrapper = ({ children }: Props) => {
   return (
-    <section className="flex h-[calc(100vh-4rem)] overflow-hidden flex-col">
+    <section className="relative flex h-[calc(100vh-4rem)] overflow-hidden flex-col">
       {children}
     </section>
   );

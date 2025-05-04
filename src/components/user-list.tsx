@@ -40,7 +40,6 @@ export const UserList = ({ searchQuery }: UserListProps) => {
   const { user, setUser } = useSelectedUserStore();
 
   const [onlineUsers, setOnlineUsers] = useState<TOnlineUsers[]>([]);
-
   const currentUserId = parseJwt()?.id;
 
   const showNotification = (message: TMessage) => {

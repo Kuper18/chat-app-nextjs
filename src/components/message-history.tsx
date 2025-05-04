@@ -35,7 +35,7 @@ export const MessageHistory = ({ roomId }: Props) => {
   const { data, hasPreviousPage, fetchPreviousPage } = useInfiniteQuery({
     queryKey: [QueryKeys.MESSAGES, roomId],
     queryFn: async ({ pageParam }): Promise<TMessageResponse> => {
-      return await MessagesService.get(roomId, pageParam);
+      return MessagesService.get(roomId, pageParam);
     },
     initialPageParam: 0,
     gcTime: 0,
@@ -110,7 +110,7 @@ export const MessageHistory = ({ roomId }: Props) => {
     <MessagesWrapper>
       <ScrollArea
         ref={scrollAreaRef}
-        className="flex-1 h-[calc(100vh-8rem)] p-4"
+        className="flex-1 h-[calc(100vh-8rem)] p-4 pb-10"
       >
         <div ref={scrollMessageRef} className="relative space-y-4">
           <Button

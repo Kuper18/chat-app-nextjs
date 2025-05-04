@@ -66,3 +66,8 @@ export type TOnlineUsers = {
   socketId: number;
   userId: number;
 };
+
+export type TTypingIndicator = {
+  isTyping: boolean;
+  userId: number;
+};
