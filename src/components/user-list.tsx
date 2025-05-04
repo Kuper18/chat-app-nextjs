@@ -14,7 +14,6 @@ import {
 import { QueryKeys } from '@/enum';
 import { useSocket } from '@/hooks/use-socket';
 import useUnreadCountMessages from '@/hooks/use-unread-count-messages';
-import useUsers from '@/hooks/use-users';
 import useSocketEvent from '@/hooks/useSocketEvent';
 import { parseJwt } from '@/lib/utils';
 import RoomsService from '@/services/rooms';
@@ -27,14 +26,14 @@ import UserItem from './user-item';
 
 interface UserListProps {
   searchQuery: string;
+  users: TUser[]
 }
 
-export const UserList = ({ searchQuery }: UserListProps) => {
+export const UserList = ({ searchQuery, users }: UserListProps) => {
   const queryClient = useQueryClient();
   const { roomId } = useParams<{ roomId: string }>();
   const router = useRouter();
 
-  const { data: users } = useUsers();
   const { data: unreadCountMessages } = useUnreadCountMessages();
   const socket = useSocket();
   const { user, setUser } = useSelectedUserStore();

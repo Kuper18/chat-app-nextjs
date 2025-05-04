@@ -42,3 +42,13 @@ export const parseJwt = (): { id: number; iat: number; exp: number } | null => {
     return null;
   }
 };
+
+export const getQueryString = (
+  params: Record<string, string | number | undefined>,
+): string => {
+  return new URLSearchParams(
+    Object.entries(params)
+      .filter((param) => param[1])
+      .map(([key, value]) => [key, String(value)]),
+  ).toString();
+};

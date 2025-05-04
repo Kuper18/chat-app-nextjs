@@ -1,10 +1,13 @@
 import axiosInstance from '@/axios-instance';
-import { TUser } from '@/types';
+import { getQueryString } from '@/lib/utils';
+import { TUserQuery, TUserResponse } from '@/types';
 
 class UsersService {
-  static async get() {
+  static async get(params: TUserQuery) {
+    const queryString = getQueryString(params);
+
     try {
-      const { data } = await axiosInstance.get<TUser[]>('/users');
+      const { data } = await axiosInstance.get<TUserResponse>(`/users?${queryString}`);
 
       return data;
     } catch (error) {

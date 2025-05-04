@@ -18,6 +18,23 @@ export type TUser = {
   lastName: string;
 };
 
+export type TUserResponse = {
+  users: TUser[];
+  meta: {
+    totalPages: number;
+    totalCount: number;
+    current: number;
+    next: number | null;
+    previous: number | null;
+  };
+};
+
+export type TUserQuery = {
+  offset: number,
+  limit?: number,
+  search?: string
+}
+
 export type TRoom = {
   id: number;
   name: string;

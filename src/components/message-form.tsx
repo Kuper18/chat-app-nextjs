@@ -6,7 +6,6 @@ import React, { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useSocket } from '@/hooks/use-socket';
-import useUsers from '@/hooks/use-users';
 import useSocketEvent from '@/hooks/useSocketEvent';
 import { parseJwt } from '@/lib/utils';
 import { messageSchema } from '@/schemas';
@@ -32,7 +31,6 @@ const MessageForm = () => {
     mutationFn: MessagesService.post,
     onSuccess: () => form.reset(),
   });
-  const { data: users } = useUsers();
 
   const [typingIdicator, setTypingIdicator] = useState<TTypingIndicator | null>(
     null,
