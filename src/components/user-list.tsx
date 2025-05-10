@@ -25,11 +25,10 @@ import {
 import UserItem from './user-item';
 
 interface UserListProps {
-  searchQuery: string;
   users: TUser[]
 }
 
-export const UserList = ({ searchQuery, users }: UserListProps) => {
+export const UserList = ({ users }: UserListProps) => {
   const queryClient = useQueryClient();
   const { roomId } = useParams<{ roomId: string }>();
   const router = useRouter();
