@@ -7,4 +7,5 @@ export enum QueryKeys {
   MESSAGES = 'messages',
   UNREAD_COUNT_MESSAGES = 'unread-count-messages',
   USERS = 'users',
+  ROOM = 'room',
 }

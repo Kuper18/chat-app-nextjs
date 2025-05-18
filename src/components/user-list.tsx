@@ -107,7 +107,7 @@ export const UserList = ({ users }: UserListProps) => {
     if (!room) {
       const response = await RoomsService.post({
         peerId: user.id,
-        name: 'My first room',
+        name: `Room for users with ids: [${user.id}, ${currentUserId}]`,
       });
 
       router.push(`/${response.id}`);

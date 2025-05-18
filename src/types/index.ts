@@ -38,9 +38,10 @@ export type TUserQuery = {
 export type TRoom = {
   id: number;
   name: string;
+  users: TUser[];
 };
 
-export type TRoomBody = Omit<TRoom, 'id'> & {
+export type TRoomBody = Pick<TRoom, 'name'> & {
   peerId: number;
 };
 

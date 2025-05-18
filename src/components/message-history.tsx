@@ -1,13 +1,11 @@
 'use client';
 
-import {
-  InfiniteData,
-  useInfiniteQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useMemo } from 'react';
 
 import { QueryKeys } from '@/enum';
+import { updateMessages } from '@/helpers';
+import useRoom from '@/hooks/use-room';
 import useScrollChatMessages from '@/hooks/use-scroll-chat-messages';
 import { useSocket } from '@/hooks/use-socket';
 import useSocketEvent from '@/hooks/useSocketEvent';
@@ -31,6 +29,9 @@ export const MessageHistory = ({ roomId }: Props) => {
 
   const currentUserId = parseJwt()?.id;
   const socket = useSocket();
+
+  const { data: room } = useRoom(currentUserId as number);
+  const recipient = room?.users.find((u) => u.id !== currentUserId);
 
   const { data, hasPreviousPage, fetchPreviousPage } = useInfiniteQuery({
     queryKey: [QueryKeys.MESSAGES, roomId],
@@ -58,36 +59,11 @@ export const MessageHistory = ({ roomId }: Props) => {
     scrollMessageRef,
   } = useScrollChatMessages({ messages, fetchPreviousPage, hasPreviousPage });
 
-  const updateMessages = (newMessage: TMessage) => {
-    queryClient.setQueryData<InfiniteData<TMessageResponse>>(
-      [QueryKeys.MESSAGES, roomId],
-      (oldData) => {
-        if (!oldData) return oldData;
-
-        const lastPageIndex = oldData.pages.length - 1;
-
-        const updatedPages = oldData.pages.map((page, index) => {
-          if (index !== lastPageIndex) return page;
-
-          return {
-            ...page,
-            messages: [...page.messages, newMessage],
-          };
-        });
-
-        return {
-          ...oldData,
-          pages: updatedPages,
-        };
-      },
-    );
-  };
-
   useSocketEvent({
     event: 'private-message',
     id: roomId,
     socket,
-    callback: updateMessages,
+    callback: updateMessages(queryClient, roomId),
   });
 
   useEffect(() => {
@@ -134,6 +110,7 @@ export const MessageHistory = ({ roomId }: Props) => {
                 isLastMessage={index === messages.length - 1}
                 message={message}
                 refLastMessage={refLastMessage}
+                recipient={recipient}
               />
             );
           })}
