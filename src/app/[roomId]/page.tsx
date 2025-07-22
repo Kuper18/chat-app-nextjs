@@ -3,16 +3,12 @@ import React from 'react';
 import MainLayout from '@/components/main-layout';
 import { MessageHistory } from '@/components/message-history';
 
-type Props = {
-  params: { roomId: string };
-};
 
-const RoomPage = async ({ params }: Props) => {
-  const { roomId } = await params;
+const RoomPage = () => {
 
   return (
     <MainLayout>
-      <MessageHistory roomId={Number(roomId)} />
+      <MessageHistory />
     </MainLayout>
   );
 };

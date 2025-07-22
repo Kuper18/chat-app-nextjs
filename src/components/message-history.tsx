@@ -19,13 +19,12 @@ import MessageForm from './message-form';
 import MessagesWrapper from './messages-wrapper';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
+import { useParams } from 'next/navigation';
 
-interface Props {
-  roomId: number;
-}
-
-export const MessageHistory = ({ roomId }: Props) => {
+export const MessageHistory = () => {
   const queryClient = useQueryClient();
+
+  const { roomId } = useParams<{ roomId: string }>();
 
   const currentUserId = parseJwt()?.id;
   const socket = useSocket();
@@ -36,7 +35,7 @@ export const MessageHistory = ({ roomId }: Props) => {
   const { data, hasPreviousPage, fetchPreviousPage } = useInfiniteQuery({
     queryKey: [QueryKeys.MESSAGES, roomId],
     queryFn: async ({ pageParam }): Promise<TMessageResponse> => {
-      return MessagesService.get(roomId, pageParam);
+      return MessagesService.get(+roomId, pageParam);
     },
     initialPageParam: 0,
     gcTime: 0,
@@ -45,9 +44,10 @@ export const MessageHistory = ({ roomId }: Props) => {
   });
 
   const messages = useMemo(
-    () => data?.pages.reduce((acc, page) => {
-      return [...acc, ...page.messages];
-    }, [] as TMessage[]),
+    () =>
+      data?.pages.reduce((acc, page) => {
+        return [...acc, ...page.messages];
+      }, [] as TMessage[]),
     [data],
   );
 
@@ -63,17 +63,17 @@ export const MessageHistory = ({ roomId }: Props) => {
     event: 'private-message',
     id: roomId,
     socket,
-    callback: updateMessages(queryClient, roomId),
+    callback: updateMessages(queryClient, +roomId),
   });
 
   useEffect(() => {
     if (socket) {
-      socket.emit('join-room', roomId);
+      socket.emit('join-room', +roomId);
     }
 
     return () => {
       if (socket) {
-        socket.emit('leave-room', roomId);
+        socket.emit('leave-room', +roomId);
       }
     };
   }, [socket, roomId]);
@@ -97,9 +97,10 @@ export const MessageHistory = ({ roomId }: Props) => {
           />
 
           {messages.map((message, index) => {
-            const isFirstUnread = !message.isRead
-              && messages.findIndex((m) => !m.isRead) === index
-              && currentUserId !== message.senderId;
+            const isFirstUnread =
+              !message.isRead &&
+              messages.findIndex((m) => !m.isRead) === index &&
+              currentUserId !== message.senderId;
 
             isFirstUnreadMessageRef.current = isFirstUnread;
 
