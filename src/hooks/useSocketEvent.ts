@@ -8,7 +8,9 @@ type Params<T> = {
   callback: (data: T) => void;
 };
 
-const useSocketEvent = <T>({ event, socket, id, callback }: Params<T>) => {
+const useSocketEvent = <T>({
+  event, socket, id, callback,
+}: Params<T>) => {
   useEffect(() => {
     if (!socket) return;
 

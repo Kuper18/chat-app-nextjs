@@ -3,13 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { signupSchema } from '@/schemas';
 import AuthService from '@/services/auth';
 import { TSignupFormData } from '@/types';
@@ -22,8 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-
-import type React from 'react';
 
 export const SignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,11 +37,15 @@ export const SignUpForm = () => {
   const router = useRouter();
 
   const onSubmit = async (data: TSignupFormData) => {
+    setIsLoading(true);
+
     try {
       await AuthService.signup(data);
       router.push('/');
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -120,7 +121,8 @@ export const SignUpForm = () => {
 
       <CardFooter className="flex flex-col space-y-4">
         <p className="text-center text-sm text-gray-600">
-          Already have an account?{' '}
+          Already have an account?
+          {' '}
           <Link
             href="/login"
             className="font-medium text-primary hover:underline"

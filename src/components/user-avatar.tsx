@@ -23,7 +23,7 @@ const UserAvatar = ({ firstName, isOnline, lastName }: Props) => {
 
       <span
         className={cn(
-          'absolute bottom-0 right-0 w-2 h-2  border border-white rounded-full',
+          'absolute bottom-0 right-0 w-2 h-2 border border-white rounded-full',
           isOnline ? 'bg-green-500' : 'bg-gray-400',
         )}
       />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import React, { useEffect, useMemo } from 'react';
 
 import { QueryKeys } from '@/enum';
@@ -19,7 +20,6 @@ import MessageForm from './message-form';
 import MessagesWrapper from './messages-wrapper';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
-import { useParams } from 'next/navigation';
 
 export const MessageHistory = () => {
   const queryClient = useQueryClient();
@@ -44,10 +44,9 @@ export const MessageHistory = () => {
   });
 
   const messages = useMemo(
-    () =>
-      data?.pages.reduce((acc, page) => {
-        return [...acc, ...page.messages];
-      }, [] as TMessage[]),
+    () => data?.pages.reduce((acc, page) => {
+      return [...acc, ...page.messages];
+    }, [] as TMessage[]),
     [data],
   );
 
@@ -97,10 +96,9 @@ export const MessageHistory = () => {
           />
 
           {messages.map((message, index) => {
-            const isFirstUnread =
-              !message.isRead &&
-              messages.findIndex((m) => !m.isRead) === index &&
-              currentUserId !== message.senderId;
+            const isFirstUnread = !message.isRead
+              && messages.findIndex((m) => !m.isRead) === index
+              && currentUserId !== message.senderId;
 
             isFirstUnreadMessageRef.current = isFirstUnread;
 

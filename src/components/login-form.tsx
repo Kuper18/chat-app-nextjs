@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -21,8 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-
-import type React from 'react';
 
 export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +89,8 @@ export const LoginForm = () => {
 
       <CardFooter className="flex flex-col space-y-4">
         <p className="text-center text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
+          Don&apos;t have an account?
+          {' '}
           <Link
             href="/signup"
             className="font-medium text-primary hover:underline"

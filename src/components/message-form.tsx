@@ -15,7 +15,9 @@ import { TMessageFormData, TTypingIndicator } from '@/types';
 
 import TypingIndicator from './typing-indicator';
 import { Button } from './ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
+import {
+  Form, FormControl, FormField, FormItem, FormMessage,
+} from './ui/form';
 import { Input } from './ui/input';
 import UserItem from './user-item';
 
@@ -41,8 +43,7 @@ const MessageForm = () => {
   useSocketEvent({
     event: 'user-typing',
     socket,
-    callback: (data: TTypingIndicator) =>
-      setTypingIdicator(data.isTyping ? data : null),
+    callback: (data: TTypingIndicator) => setTypingIdicator(data.isTyping ? data : null),
   });
 
   const handleEmitEvent = useCallback(
