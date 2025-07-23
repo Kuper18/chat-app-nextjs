@@ -8,6 +8,7 @@ import { TTokens } from './types';
 
 const API_CONFIG = {
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000/api',
+  withCredentials: true,
 } as const;
 
 const axiosInstance = axios.create(API_CONFIG);
