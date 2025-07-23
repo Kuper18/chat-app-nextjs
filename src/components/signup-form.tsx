@@ -41,7 +41,7 @@ export const SignUpForm = () => {
 
     try {
       await AuthService.signup(data);
-      router.push('/');
+      router.replace('/');
     } catch (error) {
       console.log(error);
     } finally {

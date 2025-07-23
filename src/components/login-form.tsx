@@ -39,7 +39,7 @@ export const LoginForm = () => {
 
     try {
       await AuthService.login(data);
-      router.push('/');
+      router.replace('/');
     } catch (error) {
       console.log(error);
     } finally {
