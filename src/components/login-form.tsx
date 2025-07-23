@@ -39,7 +39,9 @@ export const LoginForm = () => {
 
     try {
       await AuthService.login(data);
-      router.push('/');
+      setTimeout(() => {
+        router.push('/');
+      }, 1000);
     } catch (error) {
       console.log(error);
     } finally {
