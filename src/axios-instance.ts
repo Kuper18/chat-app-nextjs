@@ -1,16 +1,25 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import Cookies from 'js-cookie';
+
+import { COOKIE_CONFIG } from './config';
+import { Tokens } from './enum';
+import { removeCookies } from './lib/utils';
+import { TTokens } from './types';
 
 const API_CONFIG = {
   baseURL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000/api',
-  withCredentials: true, // Always send cookies
 } as const;
 
 const axiosInstance = axios.create(API_CONFIG);
 
-// Remove Authorization header logic entirely - rely only on cookies
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // No Authorization header needed - cookies handle auth
+    const accessToken = Cookies.get(Tokens.ACCESS);
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
     return config;
   },
   (error: AxiosError) => Promise.reject(error),
@@ -27,18 +36,25 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Refresh endpoint will read refresh token from httpOnly cookies
-        await axios.post(
+        const refreshToken = Cookies.get(Tokens.REFRESH);
+
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
+        const { data } = await axios.post<Pick<TTokens, 'accessToken'>>(
           `${API_CONFIG.baseURL}/refresh-token`,
-          {},
-          { withCredentials: true },
+          { refreshToken },
         );
 
-        // Retry original request - new access token cookie will be sent automatically
+        Cookies.set(Tokens.ACCESS, data.accessToken, COOKIE_CONFIG);
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${data.accessToken}`;
+
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // Redirect to login if refresh fails
+        clearAuthTokens();
         window.location.href = '/login';
+
         return Promise.reject(refreshError);
       }
     } else {
@@ -46,5 +62,10 @@ axiosInstance.interceptors.response.use(
     }
   },
 );
+
+const clearAuthTokens = (): void => {
+  removeCookies();
+  delete axiosInstance.defaults.headers.common.Authorization;
+};
 
 export default axiosInstance;
